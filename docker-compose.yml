@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  python_service:
+    build: './volumes/BasicApp'
+    container_name: 'django_cntnr'
+    ports:
+      - '8000:8000'
+    volumes:
+      - type: 'bind'
+        source: './volumes/BasicApp'
+        target: '/BasicApp'
+        read_only: false
+    environment:
+      - DATABASE_NAME=BasicAppDB
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DJANGO_SECRET_KEY=django-insecure-tmd7i131zvif+(9o339v71w6#rnolt@bm_yz4z_%#3^axb390s
+      - DJANGO_DEBUG=True
+      - DJANGO_DATABASE_URL=postgresql://postgres:postgres@postgresql_service/BasicAppDB
+    depends_on:
+      - postgresql_service
+    restart: 'no'
+
+  postgresql_service:
+    image: 'postgres:14.3-alpine3.16'
+    container_name: 'postgres_cntnr'
+    expose:
+      - '5432'
+    environment:
+      - POSTGRES_DB=BasicAppDB
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
